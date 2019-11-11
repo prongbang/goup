@@ -5,12 +5,14 @@ import (
 	"io"
 	"mime/multipart"
 	"os"
+	"path/filepath"
 )
 
 // DataSource is the interface
 type DataSource interface {
 	SaveFile(path string, file *multipart.FileHeader) (string, error)
 	CreateDirectory(dirName string) bool
+	ExtWhitelist(path string) (string, error)
 }
 
 type dataSource struct {
@@ -62,4 +64,14 @@ func (ds *dataSource) CreateDirectory(dirName string) bool {
 	}
 
 	return false
+}
+
+func (ds *dataSource) ExtWhitelist(path string) (string, error) {
+	var EXT = [...]string{".jpg", ".jpeg", ".png", ".gif"}
+	for _, ext := range EXT {
+		if filepath.Ext(path) == ext {
+			return ext, nil
+		}
+	}
+	return "", fmt.Errorf("%s", "Unsupported file")
 }
