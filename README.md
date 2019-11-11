@@ -17,7 +17,6 @@ POST http://localhost:4000/api/v1/upload
 
 Fields:
 - file=filename.jpg
-- platforms=Android
 ```
 
 - Response

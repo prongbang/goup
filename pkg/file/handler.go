@@ -1,8 +1,8 @@
 package file
 
 import (
-	"log"
 	"net/http"
+	"os"
 
 	"github.com/labstack/echo"
 )
@@ -28,12 +28,10 @@ func (h *handler) Upload(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	platform := c.FormValue("platform")
-	log.Println(platform)
 
 	filePath, err := h.UseCase.Upload(file)
 
 	return c.JSON(http.StatusOK, echo.Map{
-		"filePath": "http://localhost:4000/" + filePath,
+		"filePath": os.Getenv("HOST") + filePath,
 	})
 }
