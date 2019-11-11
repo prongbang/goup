@@ -14,6 +14,7 @@ go get github.com/prongbang/goup
 
 ```
 HOST=http://localhost:4000/
+EXT=jpg,jpeg,png,gif
 ```
 
 - main.go

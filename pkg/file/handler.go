@@ -31,6 +31,12 @@ func (h *handler) Upload(c echo.Context) error {
 
 	filePath, err := h.UseCase.Upload(file)
 
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"message": "This file type is not supported.",
+		})
+	}
+
 	return c.JSON(http.StatusOK, echo.Map{
 		"filePath": os.Getenv("HOST") + filePath,
 	})

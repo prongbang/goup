@@ -21,12 +21,5 @@ func NewUseCase(repo Repository) UseCase {
 }
 
 func (u *useCase) Upload(m *multipart.FileHeader) (string, error) {
-
-	fileName, err := u.Repo.SaveFile(m)
-
-	if err == nil {
-		return fileName, err
-	}
-
-	return "", err
+	return u.Repo.SaveFile(m)
 }

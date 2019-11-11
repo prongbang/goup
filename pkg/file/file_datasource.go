@@ -6,6 +6,9 @@ import (
 	"mime/multipart"
 	"os"
 	"path/filepath"
+	"strings"
+
+	"github.com/google/uuid"
 )
 
 // DataSource is the interface
@@ -30,9 +33,17 @@ func (ds *dataSource) SaveFile(path string, file *multipart.FileHeader) (string,
 	}
 	defer src.Close()
 
+	ext := filepath.Ext(file.Filename)
+	if _, e := ds.ExtWhitelist(ext); e != nil {
+		return "", e
+	}
+
+	uid, _ := uuid.NewUUID()
+	filename := fmt.Sprintf("%s%s", uid.String(), ext)
+
 	// Destination
 	ds.CreateDirectory(path)
-	pathFile := fmt.Sprintf("%s/%s", path, file.Filename)
+	pathFile := fmt.Sprintf("%s/%s", path, filename)
 	dst, err := os.Create(pathFile)
 	if err != nil {
 		return "", err
@@ -67,10 +78,14 @@ func (ds *dataSource) CreateDirectory(dirName string) bool {
 }
 
 func (ds *dataSource) ExtWhitelist(path string) (string, error) {
-	var EXT = [...]string{".jpg", ".jpeg", ".png", ".gif"}
-	for _, ext := range EXT {
-		if filepath.Ext(path) == ext {
-			return ext, nil
+	extList := os.Getenv("EXT")
+	exts := strings.Split(extList, ",")
+
+	if len(exts) > 0 {
+		for _, ext := range exts {
+			if filepath.Ext(path) == "."+ext {
+				return "." + ext, nil
+			}
 		}
 	}
 	return "", fmt.Errorf("%s", "Unsupported file")
